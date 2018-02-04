@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<title>BiliGo微信小程序后台管理</title>
+
+<meta name="description" content="BiliGo微信小程序后台管理" />
+<meta name="keyword" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<script type="text/javascript" src = "{{ static_url('plugin/vue.js') }}"></script>
+<script type="text/javascript" src = "{{ static_url('plugin/vue-resource/dist/vue-resource.js') }}"></script>
+<!-- <script type="text/javascript" src = "{{ static_url('plugin/jquery-3.1.1.js') }}"></script> -->
+
+
+
+<style>
+body{
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: #fff;
+}
+.info_body{
+	width: 100%;
+	overflow: hidden;
+	margin: 10px auto;
+}
+.main_body{
+	width: 1200px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+.res_body{
+	width: 100%;
+	margin: 10px auto;
+}
+.menu_body{
+	width: 100%;
+	overflow: hidden;
+	margin: 20px auto;
+}
+.btn_1{
+	padding: 0 20px;
+	margin: 10px;
+	background: #FF5400;
+	border-radius: 15px;
+	height: 30px;
+	overflow: hidden;
+	line-height: 30px;
+	font-size: 18px;
+	text-align: center;
+	color: #FFFFFF;
+	float: left;
+	display: inline;
+	cursor:pointer;
+}
+.btn_2{
+	padding: 0 20px;
+	margin: 10px;
+	background: #069A49;
+	border-radius: 15px;
+	height: 30px;
+	overflow: hidden;
+	line-height: 30px;
+	font-size: 18px;
+	text-align: center;
+	color: #FFFFFF;
+	float: left;
+	display: inline;
+	cursor:pointer;
+}
+.l50{
+	width: 100%;
+	height: 50px;
+	overflow: hidden;
+	margin: 0 auto;
+}
+.i50{
+	margin: 0 5px;
+	float:left;
+	display: inline;
+	float:left;
+	display: inline;
+	line-height: 50px;
+	font-size: 18px;
+}
+
+
+.input_1{
+	width: 200px;
+	height: 25px;
+	overflow: hidden;
+	border: 1px solid #cccccc;
+	outline: none;
+}
+.text_1{
+	width: 1000px;
+	height: 500px;
+	overflow: hidden;
+	outline: none;
+	overflow-Y:scroll;
+	padding: 10px;
+	line-height: 25px;
+	font-size: 16px;
+	color: #666666;
+}
+</style>
+
+<body >
+	<div class="main_body" id="main">
+		<!-- 信息内容 -->
+		<div class="info_body">
+			<div class="l50">
+				<div class="i50">
+					同步目标服务器：
+				</div>
+				<div class="i50">
+					<input class="input_1" v-model="info.host" />
+				</div>
+				<div class="btn_2" v-for="item in hosts" @click="update_host(item.name)">
+					#{ item.name }
+				</div>
+			</div>
+		</div>
+		<div class="menu_body">
+			<!-- 按钮 -->
+			<div class="btn_1" @click="syn_all">
+				同步全部
+			</div>
+			<div class="btn_1" @click="syn_comm">
+				同步商品信息
+			</div>
+			<div class="btn_1" @click="syn_repertory">
+				同步库存信息
+			</div>
+			<div class="btn_1" @click="syn_spe">
+				同步特价信息
+			</div>
+		</div>
+		<!-- 操作提示 -->
+		<div class="l50">
+			<div class="i50">
+				#{ msg }
+			</div>
+		</div>
+		<!-- 反馈信息 -->
+		<div class="res_body">
+			<textarea class="text_1" spellcheck="false" v-model ="res"></textarea>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="{{ static_url('js/pub.js') }}" ></script>
+</html>
