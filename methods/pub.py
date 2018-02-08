@@ -78,14 +78,24 @@ def check_ip(ip, port):
         sk.close()
     return False
 
-def pub_get_arg(s):
-	try:
-		data = pub_json_loads(s)
-	except:
-		data = ""
-		return False
-	else:
-		return data
+# 获取传递数据
+def pub_get_arg(s, item, method):
+	if method == "post":
+		try:
+			data = pub_json_loads(s)
+		except:
+			data = ""
+			return False
+		else:
+			return data[item]
+	elif method == "get":
+		try:
+			res = s.get_argument(item)
+		except:
+			res = ""
+			return False
+		else:
+			return res
 
 
 

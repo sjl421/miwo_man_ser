@@ -10,13 +10,22 @@ import uuid
 from handlers.url_handlers import *
 # 导入api
 from api.restk import *
+from api.item_info import *
+from api.supplier_info import *
+from api.sale_record import *
+from api.category_info import *
+from api.get_ip import *
 
 url = [
 	# 页面
 	# (r"/", index),
-
-	# 方法
-	(r"/api/restk", restk)
+	# api
+	(r"/api/get_ip", api_get_ip),
+	(r"/api/restk", restk),
+	(r"/api/item_info", api_item_info),
+	(r"/api/supplier_info", api_supplier_info),
+	(r"/api/sale_record", api_sale_record),
+	(r"/api/category_info", api_category_info),
 	]
 #--------------------------------
 # 设置MODULES

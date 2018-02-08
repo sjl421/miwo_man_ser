@@ -12,8 +12,6 @@ mdb = {
 	"db": "miwo_man_ser"
 }
 
-
-
 def mdb_get_conn():
 	return pymysql.connect(**mdb)
 
@@ -101,3 +99,4 @@ def mdb_do(conn, sql):
 	else:
 		return True
 
+	

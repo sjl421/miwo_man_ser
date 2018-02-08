@@ -7,9 +7,8 @@ from methods.pub import *
 class restk(tornado.web.RequestHandler):
 	@tornado.gen.coroutine
 	def post(self):
-		
 		res = {"res": "error_0"}
-		data = pub_get_arg(self)
+		data = pub_json_loads(self)
 		if data:
 			act = data["act"]
 			res = {"res": "error"}
