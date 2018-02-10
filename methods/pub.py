@@ -8,6 +8,15 @@ import socket
 
 pp = pprint.pprint;
 
+PUB_PI_URL = "http://pi.miwo.shop:8001"
+
+# 判断变量类型
+def pub_type(item, type):
+	return isinstance(item, type)
+
+# 保留两位小数
+def pub_2f(item):
+	return format(item, '0.2f')
 # 字节转字符串
 def pub_btos(b):
 	return b.decode(encoding = 'utf-8')

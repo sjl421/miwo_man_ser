@@ -15,6 +15,7 @@ from api.supplier_info import *
 from api.sale_record import *
 from api.category_info import *
 from api.get_ip import *
+from api.report import *
 
 url = [
 	# 页面
@@ -26,6 +27,7 @@ url = [
 	(r"/api/supplier_info", api_supplier_info),
 	(r"/api/sale_record", api_sale_record),
 	(r"/api/category_info", api_category_info),
+	(r"/api/report", api_report),
 	]
 #--------------------------------
 # 设置MODULES
