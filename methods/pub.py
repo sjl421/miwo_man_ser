@@ -42,6 +42,10 @@ def pub_get_time_str(item):
 def pub_get_time_code():
 	return time.strftime("%Y%m%d%H%M%S", time.localtime())
 
+# 时间戳转字符串
+def pub_stamp2str(stamp):
+	return time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(stamp))
+
 # 获取当前时间戳
 def pub_get_time_stamp():
 	return int(time.time());
