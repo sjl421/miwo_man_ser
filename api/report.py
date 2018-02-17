@@ -31,65 +31,81 @@ class api_report(tornado.web.RequestHandler):
 			return_sum = {"money_sum": float(0), "item_count": float(0), "item_qty": float(0), "in_sum": float(0)}
 
 			# 整理日期的时间戳
-			now = datetime.datetime.now()
+			now_day = datetime.datetime.now()
 			# 今天
 			if data["report_item"]["sale_date"] == "today":
-				s_stamp = float(time.mktime(datetime.datetime.combine(datetime.date.today(), datetime.time.min).timetuple()))
-				e_stamp = float(s_stamp + 86400) 
+				s_datetime = datetime.datetime.combine(now_day, datetime.time.min)
+				e_datetime = datetime.datetime.combine(now_day, datetime.time.max)
 
 			# 昨天
 			if data["report_item"]["sale_date"] == "yesterday":
-				e_stamp = float(time.mktime(datetime.datetime.combine(datetime.date.today(), datetime.time.min).timetuple()))
-				s_stamp = e_stamp - 86400
+				s_datetime = datetime.datetime.combine((datetime.date.today() - datetime.timedelta(days = 1)), datetime.time.min)
+				e_datetime = datetime.datetime.combine((datetime.date.today() - datetime.timedelta(days = 1)), datetime.time.max)
 
 			# 本周
 			if data["report_item"]["sale_date"] == "this_week":
-				t_time = now - timedelta(days=now.weekday())
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				e_stamp = float(s_stamp + 604800)
+				
+				s_datetime = datetime.datetime.combine((now_day - datetime.timedelta(days = now_day.weekday())), datetime.time.min)
+				e_datetime = datetime.datetime.combine((now_day + datetime.timedelta(days = (6 - now_day.weekday()))), datetime.time.max)
 
 			# 上周
 			if data["report_item"]["sale_date"] == "last_week":
-				t_time = now - timedelta(days=now.weekday()+7)
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				e_stamp = float(s_stamp + 604800)
+
+				# t_time = now - timedelta(days=now.weekday()+7)
+				# s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
+				# e_stamp = float(s_stamp + 604800)
+				s_datetime = datetime.datetime.combine((now_day - datetime.timedelta(days = now_day.weekday() + 7)), datetime.time.min)
+				e_datetime = datetime.datetime.combine((now_day - datetime.timedelta(days = now_day.weekday() + 1)), datetime.time.max)
+
 
 			# 本月
 			if data["report_item"]["sale_date"] == "this_month":
-				t_time = datetime.datetime(now.year, now.month, 1) + timedelta(days=1)
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				t_time = datetime.datetime(now.year, now.month + 1, 1) + timedelta(days=1)
-				e_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
+				now_year = now_day.year
+				now_month = now_day.month
+
+				s_datetime = datetime.datetime.combine(datetime.date(now_year, now_month, 1), datetime.time.min)
+
+				if now_month == 12:
+					e_datetime = datetime.datetime.combine(datetime.date(now_year + 1, 1, 1) - datetime.timedelta(days = 1), datetime.time.min)
+				else:
+					e_datetime = datetime.datetime.combine(datetime.date(now_year, now_month + 1, 1) - datetime.timedelta(days = 1), datetime.time.max)
+
 			
 			# 上月
 			if data["report_item"]["sale_date"] == "last_month":
-				e_time = datetime.datetime(now.year, now.month, 1) + timedelta(days=1)
-				e_stamp = float(time.mktime(e_time.timetuple()) - time.mktime(e_time.timetuple()) % 86400 + time.timezone)
-				s_time = datetime.datetime(e_time.year, e_time.month - 1, 1) + timedelta(days=1)
-				s_stamp = float(time.mktime(s_time.timetuple()) - time.mktime(s_time.timetuple()) % 86400 + time.timezone)
+				now_year = now_day.year
+				now_month = now_day.month
+
+				if now_month == 1:
+					s_datetime = datetime.datetime.combine(datetime.date(now_year - 1, 12, 1), datetime.time.min)
+
+				else:
+					s_datetime = datetime.datetime.combine(datetime.date(now_year, now_month - 1, 1), datetime.time.min)
+
+				e_datetime =  datetime.datetime.combine((datetime.date(now_year, now_month, 1) - datetime.timedelta(days = 1)), datetime.time.max)
 
 			# 一周内
 			if data["report_item"]["sale_date"] == "in_week":
-				t_time = now - timedelta(days=6)
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				e_stamp = float(time.mktime(now.timetuple()) - time.mktime(now.timetuple()) % 86400 + time.timezone + 86400)
+				s_datetime = datetime.datetime.combine((datetime.date.today() - datetime.timedelta(days = 6)), datetime.time.min)
+				e_datetime = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 			# 一月内
 			if data["report_item"]["sale_date"] == "in_month":
-				t_time = now - timedelta(days=30)
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				e_stamp = float(time.mktime(now.timetuple()) - time.mktime(now.timetuple()) % 86400 + time.timezone + 86400)
+				s_datetime = datetime.datetime.combine((datetime.date.today() - datetime.timedelta(days = 30)), datetime.time.min)
+				e_datetime = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 			# 一年内
 			if data["report_item"]["sale_date"] == "in_year":
-				t_time = now - timedelta(days=365)
-				s_stamp = float(time.mktime(t_time.timetuple()) - time.mktime(t_time.timetuple()) % 86400 + time.timezone)
-				e_stamp = float(time.mktime(now.timetuple()) - time.mktime(now.timetuple()) % 86400 + time.timezone + 86400)
+				s_datetime = datetime.datetime.combine((datetime.date.today() - datetime.timedelta(days = 365)), datetime.time.min)
+				e_datetime = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 
 
-			start_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(s_stamp))
-			end_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_stamp))
+			# start_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(s_stamp))
+			# end_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_stamp))
+			print(s_datetime)
+			print(e_datetime)
+			start_date = str(s_datetime)[: 19]
+			end_date = str(e_datetime)[: 19]
 
-			# print(start_date)
-			# print(end_date)
+			
 
 			# 整理关键字
 			if not pub_none(data["report_item"]["key_word"]):
@@ -97,9 +113,9 @@ class api_report(tornado.web.RequestHandler):
 			else:
 				key_word = "%"
 
-			sql = mdb_cm(conn, "select (sum(sale_record.sale_money) - sum(sale_record.in_price)) / sum(sale_record.sale_money) as rate, sum(sale_record.sale_money) - sum(sale_record.in_price) as profit, sale_record.type, sum(sale_record.sale_qty) as sale_qty, sum(sale_record.in_price) as in_price, sum(sale_record.sale_money) as sale_money, sale_record.sale_price, sale_record.item_barcode,item_info.`name`, item_info.size, item_info.unit from sale_record left join item_info on sale_record.item_barcode = item_info.barcode where sale_record.oper_time_stamp >= %s and sale_record.oper_time_stamp <= %s and item_info.name like %s GROUP BY sale_record.type, sale_record.item_barcode  order by sum(sale_record.sale_qty) desc, sale_money desc, type asc", (float(s_stamp), float(e_stamp), str(key_word)))
+			sql = mdb_cm(conn, "select (sum(sale_record.sale_money) - sum(sale_record.in_price)) / sum(sale_record.sale_money) as rate, sum(sale_record.sale_money) - sum(sale_record.in_price) as profit, sale_record.type, sum(sale_record.sale_qty) as sale_qty, sum(sale_record.in_price) as in_price, sum(sale_record.sale_money) as sale_money, sale_record.sale_price, sale_record.item_barcode,item_info.`name`, item_info.size, item_info.unit from sale_record left join item_info on sale_record.item_barcode = item_info.barcode where sale_record.oper_datetime >= %s and sale_record.oper_datetime <= %s and item_info.name like %s GROUP BY sale_record.type, sale_record.item_barcode  order by sum(sale_record.sale_qty) desc, sale_money desc, type asc", (str(s_datetime), str(e_datetime), str(key_word)))
 
-			print(sql)
+			# print(sql)
 
 			result = mdb_get_all(conn, sql)
 			if result:

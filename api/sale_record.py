@@ -18,12 +18,12 @@ class api_sale_record(tornado.web.RequestHandler):
 			res = syn_data_mysql(data)
 
 		# 增量同步销售记录时，需要获取最后一条记录的操作时间，用于确定从何时开始同步记录
-		if act and act == "get_rcd_time_stamp":
+		if act and act == "get_rcd_datetime":
 			# 获取当前远程数据库中最后一条记录的操作时间戳
-			sql = "select oper_time_stamp from sale_record order by oper_time_stamp desc limit 1"
+			sql = "select oper_datetime from sale_record order by oper_datetime desc limit 1"
 			result = mdb_get_one(conn, sql)
 			if result:
-				res = {"res": "done", "rcd_time_stamp": result["oper_time_stamp"]}
+				res = {"res": "done", "rcd_datetime": str(result["oper_datetime"])}
 
 		
 
